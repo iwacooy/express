@@ -1,3 +1,5 @@
+const { Category } = require('../models')
+
 const getAllCategories = (req, res) => {
     res.status(200).json({
         message: 'List produk HP',
@@ -28,25 +30,28 @@ const getCategoryById = (req, res) => {
     })
 }
 
-const storeCategories = (req, res) => {
-    const { name,description } = req.body
-    
+const storeCategories = async (req, res) => {
+    try{
+        const { name,description } = req.body
 
-    if(!name && !description){
+        const newCategory = await Category.create(
+            { 
+                name, 
+                description 
+            }
+        );
+
+        res.status(201).json({
+            status: 'success',
+            data: newCategory
+        })
+    } catch (error) {
         return res.status(400).json({
-            status: 'Failed',
-            message: 'Data valdiation failed'
+            status: 'fail',
+            error
         })
     }
 
-    res.status(201).json({
-        status: 'Success',
-        message: 'Data has been created',
-        data: {
-            name,
-            description
-        }
-    })
 }
 
 module.exports = { getAllCategories, getCategoryById, storeCategories}
