@@ -92,5 +92,43 @@ const updateCategory = async (req, res) => {
     }
 }
 
-module.exports = { getAllCategories, getCategoryById, storeCategories, updateCategory}
+
+const deleteCategory = async (req, res) => {
+   
+    try{
+        const { id } = req.params
+        const idCategory = await Category.findByPk(id)
+
+        if(!idCategory){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Gagal menghapus, category not found'
+            })
+        }
+        
+        await Category.destroy({
+            where: {
+                id: id
+            }
+        });
+        
+        return res.status(200).json({
+            status: 'success', 
+            message: `Data dengan id ${id} has been deleted`
+        })
+        
+
+
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
+
+}
+
+
+module.exports = { getAllCategories, getCategoryById, 
+    storeCategories, updateCategory, deleteCategory}
 

@@ -1,6 +1,7 @@
 const express = require('express')
 const routes = express.Router()
-const { getAllCategories, getCategoryById, storeCategories, updateCategory } = require('../controller/handler')
+const { getAllCategories, getCategoryById,
+     storeCategories, updateCategory, deleteCategory } = require('../controller/handler')
 
 // Mendefinisikan rute untuk homepage
 
@@ -14,6 +15,8 @@ routes.post('/', storeCategories)
 //Update Data
 routes.put('/:id', updateCategory)
 
+//Delete Data
+routes.delete('/:id', deleteCategory)
 
 
 
