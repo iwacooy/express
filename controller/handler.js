@@ -63,5 +63,34 @@ const storeCategories = async (req, res) => {
 
 }
 
-module.exports = { getAllCategories, getCategoryById, storeCategories}
+const updateCategory = async (req, res) => {
+    try{
+        const { id } = req.params
+        await Category.update(req.body, {
+            where: {
+                id: id
+            }
+        });
+
+        const newCategory = await Category.findByPk(id)
+
+        if(!newCategory){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Category not found'
+            })
+        }
+        return res.status(200).json({
+            status: 'success',
+            data: newCategory
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
+}
+
+module.exports = { getAllCategories, getCategoryById, storeCategories, updateCategory}
 
