@@ -1,33 +1,42 @@
 const { Category } = require('../models')
 
-const getAllCategories = (req, res) => {
-    res.status(200).json({
-        message: 'List produk HP',
-        data: [
-            {
-                id: 1,
-                name: 'iPhone 12',
-            },
-            {
-                id: 2,
-                name: 'Samsung S24',
-            },
-            {
-                id: 3,
-                name: 'Xiaomi 14'
-            }
-        ]
-    })
+const getAllCategories = async (req, res) => {
+    try{
+        const categories = await Category.findAll()
+
+        return res.status(200).json({
+            status: 'success',
+            data: categories
+        })
+    } catch (error){
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
 }
 
-const getCategoryById = (req, res) => {
-    const Product = req.params.id
-    res.status(200).json({
-        message: 'Detail produk HP',
-        data: {
-            Product
+const getCategoryById = async (req, res) => {
+    try{
+        const { id } = req.params
+        const category = await Category.findByPk(id)
+
+        if(!category){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Category not found'
+            })
         }
-    })
+        return res.status(200).json({
+            status: 'success',
+            data: category
+        }) 
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
 }
 
 const storeCategories = async (req, res) => {
@@ -48,7 +57,7 @@ const storeCategories = async (req, res) => {
     } catch (error) {
         return res.status(400).json({
             status: 'fail',
-            error
+            error: error.errors
         })
     }
 

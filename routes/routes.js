@@ -4,12 +4,12 @@ const { getAllCategories, getCategoryById, storeCategories } = require('../contr
 
 // Mendefinisikan rute untuk homepage
 
-//Method GET
+//Read Data
 routes.get('/', getAllCategories)
 routes.get('/:id', getCategoryById)
 
-//Method POST
-routes.post('/:id', storeCategories)
+//Create Data
+routes.post('/', storeCategories)
 
 
 
