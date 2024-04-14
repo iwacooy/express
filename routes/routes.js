@@ -1,16 +1,22 @@
 const express = require('express')
 const routes = express.Router()
-const { getAllCategories, getCategoryById, storeCategories } = require('../controller/handler')
+const { getAllCategories, getCategoryById,
+     storeCategories, updateCategory, deleteCategory } = require('../controller/handler')
 
 // Mendefinisikan rute untuk homepage
 
-//Method GET
+//Read Data
 routes.get('/', getAllCategories)
 routes.get('/:id', getCategoryById)
 
-//Method POST
-routes.post('/:id', storeCategories)
+//Create Data
+routes.post('/', storeCategories)
 
+//Update Data
+routes.put('/:id', updateCategory)
+
+//Delete Data
+routes.delete('/:id', deleteCategory)
 
 
 

@@ -1,53 +1,134 @@
-const getAllCategories = (req, res) => {
-    res.status(200).json({
-        message: 'List produk HP',
-        data: [
-            {
-                id: 1,
-                name: 'iPhone 12',
-            },
-            {
-                id: 2,
-                name: 'Samsung S24',
-            },
-            {
-                id: 3,
-                name: 'Xiaomi 14'
-            }
-        ]
-    })
+const { Category } = require('../models')
+
+const getAllCategories = async (req, res) => {
+    try{
+        const categories = await Category.findAll()
+
+        return res.status(200).json({
+            status: 'success',
+            data: categories
+        })
+    } catch (error){
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
 }
 
-const getCategoryById = (req, res) => {
-    const Product = req.params.id
-    res.status(200).json({
-        message: 'Detail produk HP',
-        data: {
-            Product
+const getCategoryById = async (req, res) => {
+    try{
+        const { id } = req.params
+        const category = await Category.findByPk(id)
+
+        if(!category){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Category not found'
+            })
         }
-    })
+        return res.status(200).json({
+            status: 'success',
+            data: category
+        }) 
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
 }
 
-const storeCategories = (req, res) => {
-    const { name,description } = req.body
-    
+const storeCategories = async (req, res) => {
+    try{
+        const { name,description } = req.body
 
-    if(!name && !description){
+        const newCategory = await Category.create(
+            { 
+                name, 
+                description 
+            }
+        );
+
+        res.status(201).json({
+            status: 'success',
+            data: newCategory
+        })
+    } catch (error) {
         return res.status(400).json({
-            status: 'Failed',
-            message: 'Data valdiation failed'
+            status: 'fail',
+            error: error.errors
         })
     }
 
-    res.status(201).json({
-        status: 'Success',
-        message: 'Data has been created',
-        data: {
-            name,
-            description
-        }
-    })
 }
 
-module.exports = { getAllCategories, getCategoryById, storeCategories}
+const updateCategory = async (req, res) => {
+    try{
+        const { id } = req.params
+        await Category.update(req.body, {
+            where: {
+                id: id
+            }
+        });
+
+        const newCategory = await Category.findByPk(id)
+
+        if(!newCategory){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Category not found'
+            })
+        }
+        return res.status(200).json({
+            status: 'success',
+            data: newCategory
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
+}
+
+
+const deleteCategory = async (req, res) => {
+   
+    try{
+        const { id } = req.params
+        const idCategory = await Category.findByPk(id)
+
+        if(!idCategory){
+            return res.status(404).json({
+                status: 'fail',
+                error: 'Gagal menghapus, category not found'
+            })
+        }
+        
+        await Category.destroy({
+            where: {
+                id: id
+            }
+        });
+        
+        return res.status(200).json({
+            status: 'success', 
+            message: `Data dengan id ${id} has been deleted`
+        })
+        
+
+
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            error: 'Server down'
+        })
+    }
+
+}
+
+
+module.exports = { getAllCategories, getCategoryById, 
+    storeCategories, updateCategory, deleteCategory}
 
